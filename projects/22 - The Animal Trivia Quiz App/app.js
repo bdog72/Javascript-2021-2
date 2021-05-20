@@ -18,12 +18,14 @@ const timeGauge = document.querySelector('.time-gauge');
 const progressContainer = document.querySelector('.progress-container');
 const scoreContainer = document.querySelector('.score-container');
 
+const message = document.querySelector('.message');
+
 // Question
 let questions = [
   {
     question: 'How many different sounds can a cat make?',
     questionImg: 'img/1.jpg',
-    BchoiceA: '100',
+    choiceA: '100',
     choiceB: '150',
     choiceC: '10',
     choiceD: '27',
@@ -118,15 +120,16 @@ let questions = [
 
 // Necessary Variables
 const lastQuestion = questions.length - 1;
+const questionTime = 10; // 10 seconds
+
+const gaugeWidth = 800; // 800px
+const gaugeUnit = gaugeWidth / questionTime; // 80px
 
 let activeQuestion = 0;
 let count = 0;
 
-const questionTime = 10; // 10 seconds
-const gaugeWidth = 800; // 800px
-
-const gaugeUnit = gaugeWidth / questionTime; // 80px
 let TIMER;
+let score = 0;
 
 // Render Question Function
 function renderQuestion() {
@@ -141,15 +144,93 @@ function renderQuestion() {
   document.body.style.backgroundImage = bodyImg;
 }
 
-start.style.display = 'none';
-renderQuestion();
+// Start Quiz Function
+function startQuiz() {
+  start.style.display = 'none';
+  renderQuestion();
 
-quiz.style.visibility = 'visible';
-renderProgress();
+  quiz.style.visibility = 'visible';
+  renderProgress();
+
+  renderCounter();
+  TIMER = setInterval(renderCounter, 1000);
+}
+
+// Start Button Event Listener
+start.addEventListener('click', startQuiz);
+
+// Answer choices event listener
+allAnswerChoices.forEach(function (clickAnswer) {
+  clickAnswer.addEventListener('click', function (e) {
+    let userAnswer = e.target.innerText;
+    checkAnswer(userAnswer);
+  });
+});
 
 // Render progress Function
 function renderProgress() {
   for (let questionIndex = 0; questionIndex <= lastQuestion; questionIndex++) {
     progressContainer.innerHTML += `<div class="progress-box" id="${questionIndex}"></div>`;
   }
+}
+
+// Render Counter Function
+function renderCounter() {
+  if (count <= questionTime) {
+    counter.innerHTML = count;
+    timeGauge.style.width = `${count * gaugeUnit}px`;
+    count++;
+  } else {
+    answerIsIncorrect();
+    nextQuestion();
+  }
+}
+
+// Check Answer Function
+function checkAnswer(answer) {
+  if (answer === questions[activeQuestion].correctAnswer) {
+    score++;
+    answerIsCorrect();
+  } else {
+    answerIsIncorrect();
+  }
+  nextQuestion();
+}
+
+// Answer is correct function
+function answerIsCorrect() {
+  document.getElementById(activeQuestion).style.backgroundColor = 'green';
+}
+
+// Answer is incorrect function
+function answerIsIncorrect() {
+  document.getElementById(activeQuestion).style.backgroundColor = 'red';
+}
+
+// Next Question Function
+function nextQuestion() {
+  count = 0;
+  if (activeQuestion < lastQuestion) {
+    activeQuestion++;
+    renderQuestion();
+  } else {
+    clearInterval(TIMER);
+    renderScore();
+  }
+}
+
+// Render Score Function
+function renderScore() {
+  scoreContainer.style.visibility = 'visible';
+
+  let scorePercentage = Math.round((100 * score) / questions.length);
+
+  scoreContainer.innerHTML = `
+    <h2>Percentage of correctly Answered Questions: ${scorePercentage}%</h2>
+    <h2>Number of correctly Answered Questions: ${score}</h2>
+  `;
+
+  // const h2 = document.createElement('h2');
+  // h2.innerText = `${scorePercentage}%`;
+  // scoreContainer.appendChild(h2);
 }
