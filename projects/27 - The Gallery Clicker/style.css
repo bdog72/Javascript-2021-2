@@ -7,8 +7,6 @@
 .wrapper {
   display: flex;
   justify-content: space-between;
-  /* justify-content: space-evenly;
-  justify-content: center; */
 }
 
 .all-imgs {
