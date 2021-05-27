@@ -21,6 +21,11 @@
   letter-spacing: 2px;
 }
 
+.title a {
+  color: #fff;
+  text-align: center;
+}
+
 .container {
   display: flex;
   justify-content: space-around;

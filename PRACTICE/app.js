@@ -1,7 +1,4 @@
 //
 //
 
-// var x = 10;
-// console.log(x);
-
-// const y;
+console.log(123);
