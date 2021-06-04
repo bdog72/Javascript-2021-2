@@ -64,6 +64,7 @@ input:focus {
 .news-container {
   height: 600px;
   overflow: auto;
+  margin-bottom: 50px;
 }
 
 h2 {
